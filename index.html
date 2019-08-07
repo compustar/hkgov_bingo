@@ -1,0 +1,157 @@
+﻿<!doctype html>
+<html lang="zh">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-lightbox@2.1.0/dist/simpleLightbox.min.css">
+        
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.3/dist/html2canvas.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/simple-lightbox@2.1.0/src/simpleLightbox.min.js"></script>
+    </head>
+    <body style="margin-top: 10px">
+        <div id="app" style="margin: auto;max-width: 500px;">
+            <ul class="nav nav-pills">
+                <li class="nav-item" v-for="item in configs">
+                    <a class="nav-link" v-bind:class="{'active': item.selected}" v-on:click="switchBoard(item)" href="#">{{item.title}}</a>
+                </li>
+                <li class="nav-item">                    
+                    <a class="nav-link" v-on:click="share" href="#">分享</a>
+                </li>
+            </ul>
+            <br/>
+            <table id="board" class="table table-bordered text-center">
+                <thead>
+                <tr>
+                    <th colspan="5" class="text-center"><h1>{{config.title}}</h1></th>
+                </tr>
+                <tr>
+                    <th colspan="5" class="text-center" v-bind:class="{'table-success': isBingo}"><h1>{{config.banner}}</h1></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="row in table">
+                    <td v-for="item in row" v-bind:class="{'table-danger': item.selected}" v-on:click="toggleSelected(item)">{{item.text}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+                // const axios = require('axios');
+                var app = new Vue({
+                    el: '#app',
+                    data: {
+                        table: [[],[],[],[],[]],
+                        config: {},
+                        isBingo: false,
+                        showLightbox: false,
+                        configs: {
+                            "ce":  {
+                                items: "ce.txt",
+                                title: "林鄭錄音機",
+                                banner: "B I N G O",
+                                selected: true
+                            },
+                            "dog":  {
+                                items: "dog.txt",
+                                title: "黑警",
+                                banner: "B I N G O",
+                                selected: false
+                            },
+                        }
+                    },
+                    methods: {
+                        share: function(){
+                            html2canvas(document.querySelector("#board")).then(canvas => {
+                                var img = canvas.toDataURL();
+                                SimpleLightbox.open({
+                                    items: [img]
+                                });
+                            });
+                        },
+                        switchBoard: function(item) {
+                            load(item)
+                        },
+                        toggleSelected: function(item) {
+                            item.selected = !item.selected;
+                            app.isBingo = false;
+                            checkBingo(app.table);
+                        }
+                    },
+                });
+
+                function checkBingo(table) {
+                    for (i = 0; i < 5; i++) {
+                        countX = 0;
+                        countY = 0;
+                        countD1 = 0;
+                        countD2 = 0;
+                        for (j = 0; j < 5; j++) {
+                            if (table[i][j].selected) {
+                                countY++;
+                                if (countY == 5) {
+                                    app.isBingo = true;
+                                    return;
+                                }
+                            }
+                            if (table[j][i].selected) {
+                                countX++;
+                                if (countX == 5) {
+                                    app.isBingo = true;
+                                    return;
+                                }
+                            }
+                            if (i == 0 && table[j][j].selected) {
+                                countD1++;
+                                if (countD1 == 5) {
+                                    app.isBingo = true;
+                                    return;
+                                }
+                            }
+                            if (i == 0 && table[4 - j][j].selected) {
+                                countD2++;
+                                if (countD2 == 5) {
+                                    app.isBingo = true;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                function load(config) {
+                    for (var key in app.configs){
+                        app.configs[key].selected = false;
+                    }
+                    app.isBingo = false;
+                    app.table = [[],[],[],[],[]];
+                    app.config = config;
+                    app.config.selected = true;
+
+                    axios.get(config.items)
+                        .then(function (response) {
+                            let statements = response.data.split("\n");
+                            let chosen = {}
+                            for (i = 0; i < 25; i++) {
+                                row = Math.floor(i / 5);
+                                
+                                x = Math.floor(Math.random() * statements.length);
+                                while (chosen[x] || statements[x] == "") {
+                                    x = Math.floor(Math.random() * statements.length);
+                                }
+                                chosen[x] = true;
+                                app.table[row].push({text:statements[x], selected: false});
+                            }
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        });
+                }
+    
+                load(app.configs.dog);
+            </script>
+        </body>
+</html>
