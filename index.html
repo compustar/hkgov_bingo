@@ -57,11 +57,17 @@
                         isBingo: false,
                         showLightbox: false,
                         configs: {
+                            "press":  {
+                                items: "press.txt",
+                                title: "記者錄音機",
+                                banner: "B I N G O",
+                                selected: true
+                            },
                             "ce":  {
                                 items: "ce.txt",
                                 title: "林鄭錄音機",
                                 banner: "B I N G O",
-                                selected: true
+                                selected: false
                             },
                             "dog":  {
                                 items: "dog.txt",
@@ -160,9 +166,9 @@
                         });
                 }
     
-                load(app.configs.ce);
+                load(app.configs.press);
             </script>
             <!-- Place this tag in your head or just before your close body tag. -->
-            <script async defer src="https://buttons.github.io/buttons.js"></script>
+            <!-- <script async defer src="https://buttons.github.io/buttons.js"></script> -->
     </body>
 </html>
