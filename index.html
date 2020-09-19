@@ -58,18 +58,21 @@
                         showLightbox: false,
                         configs: {
                             "press":  {
+                                name: "press",
                                 items: "press.txt",
                                 title: "記者錄音機",
                                 banner: "B I N G O",
                                 selected: true
                             },
                             "ce":  {
+                                name: "ce",
                                 items: "ce.txt",
                                 title: "林鄭錄音機",
                                 banner: "B I N G O",
                                 selected: false
                             },
                             "dog":  {
+                                name: "dog",
                                 items: "dog.txt",
                                 title: "黑警",
                                 banner: "B I N G O",
@@ -87,6 +90,7 @@
                             });
                         },
                         switchBoard: function(item) {
+                            location.hash = "#" + item.name
                             load(item)
                         },
                         toggleSelected: function(item) {
