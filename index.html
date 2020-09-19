@@ -90,8 +90,8 @@
                             });
                         },
                         switchBoard: function(item) {
-                            location.hash = "#" + item.name
                             load(item)
+                            location.hash = "#" + item.name
                         },
                         toggleSelected: function(item) {
                             item.selected = !item.selected;
