@@ -168,7 +168,7 @@
     
                 tab = app.configs.press
                 if (location.hash) {
-                    tab = location.hash.substring(1)
+                    tab = app.configs[location.hash.substring(1)]
                 }
                 load(tab);
             </script>
