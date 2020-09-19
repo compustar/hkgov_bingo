@@ -166,7 +166,11 @@
                         });
                 }
     
-                load(app.configs.press);
+                tab = app.configs.press
+                if (location.hash) {
+                    tab = location.hash.substring(1)
+                }
+                load(tab);
             </script>
             <!-- Place this tag in your head or just before your close body tag. -->
             <script async defer src="https://buttons.github.io/buttons.js"></script>
